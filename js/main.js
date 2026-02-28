@@ -13,4 +13,4 @@ window.resize = function () {
     canvas.height = window.innerHeight;
 }
 
-resize();
+window.addEventListener("resize", resize, false);
