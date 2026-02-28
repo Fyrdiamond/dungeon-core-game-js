@@ -1,4 +1,4 @@
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
     const canvas = document.getElementById('canvas');
 
     function fullscreen() {
@@ -16,4 +16,21 @@ window.addEventListener("load", () => {
 
     resize();
     window.addEventListener("resize", resize, false);
+
+    async function load_mods() {
+        const manifest = await fetch('/mods/mods.json')
+            .then(r => r.json());
+
+        const modules = await Promise.all(
+            manifest.map(mod => import(`/mods/${mod}/mod.js`))
+        );
+
+        return modules.map(module => module.default);
+    }
+
+    const mods = await load_mods();
+
+    await Promise.all(
+        mods.map(mod => new mod())
+    );
 })
